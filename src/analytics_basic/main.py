@@ -62,10 +62,20 @@ def plot_histrogram_HS_rm_missing_val(hyper_cube):
     plt.tight_layout()
     plt.savefig(os.path.join(outdir, "histogram_log_nodata_removed.png"), dpi=300)
     plt.close()
-    
+
+def visualization_HS_cube(hyper_cube,IDX_BAND=0):
+    plt.figure(figsize=(8,10), dpi=120, facecolor="w",  edgecolor="k")
+    plt.title(f"Band{IDX_BAND}")
+    plt.imshow(hyper_cube[:,:,IDX_BAND], vmin=1)
+    plt.colorbar(shrink=0.6)
+    plt.tight_layout()
+    plt.savefig(os.path.join(outdir, f"visualization_HS_cube_{IDX_BAND}.png"), dpi=300)
+
 
 if __name__=="__main__":
-    filepath = "/Volumes/ssd/HSID/HISUI/HSHL1G_N203W1558_20230818005931_20240308010611.tif"
+    # https://sorabatake.jp/40363/
+    # filepath = "/Volumes/ssd/HSID/HISUI/HSHL1G_N203W1558_20230818005931_20240308010611.tif"
+    filepath = "/Volumes/ssd/HSID/HISUI/HSHL1G_N329E1299_20230523072720_20240308144532.tif"
     outdir = "./data"
     os.makedirs(outdir, exist_ok=True)
     
@@ -74,5 +84,7 @@ if __name__=="__main__":
     # check_missing_val(hyper_cube)
     plot_histrogram_HS(hyper_cube)
     plot_histrogram_HS_rm_missing_val(hyper_cube)
+    visualization_HS_cube(hyper_cube, IDX_BAND=0)
+    
 
     
