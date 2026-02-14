@@ -66,48 +66,26 @@ def plot_histrogram_HS_rm_missing_val(hyper_cube):
 
 def visualization_HS_cube(hyper_cube,IDX_BAND=0):
     plt.figure(figsize=(16,10), dpi=120, facecolor="w",  edgecolor="k")
-    
-    for i in range(24):
-        print(i)
-        plt.subplot(3, 8, i+1)
-        plt.title('Band {}'.format(i+1))
-        plt.imshow(hyper_cube[:,:,i], vmin=1, vmax=65535)
-#        plt.imshow(hyper_cube[:,:,i], cmap='jet', vmin=1, vmax=185)
-        plt.colorbar(shrink=0.5)
-        plt.axis('off')
-        plt.tight_layout()
-    plt.savefig('./data/all_bands.png')
-    plt.show();plt.clf();plt.close()
-#    plt.title(f"Band{IDX_BAND}")
-#    plt.imshow(hyper_cube[:,:,IDX_BAND], vmin=1)
-#    plt.colorbar(shrink=0.6)
-#    plt.tight_layout()
-#    plt.savefig(os.path.join(outdir, f"visualization_HS_cube_{IDX_BAND}.png"), dpi=300)
+    plt.title(f"Band{IDX_BAND}")
+    plt.imshow(hyper_cube[:,:,IDX_BAND], vmin=1)
+    plt.colorbar(shrink=0.6)
+    plt.tight_layout()
+    plt.savefig(os.path.join(outdir, f"visualization_HS_cube_{IDX_BAND}.png"), dpi=300)
 
 
-def visualization_HS_cube_a(hyper_cube, n_show=None, outpath="./data/all_bands.png",
+def visualization_HS_cube_all(hyper_cube, outpath="./data/all_bands.png",
                             ncols=10, percentile=(1, 99), downsample=4):
     """
     hyper_cube: (H, W, B)
-    n_show: 表示するバンド数（Noneなら全バンド）
     ncols: 1行あたりの枚数
     percentile: 表示レンジ決定のパーセンタイル
     downsample: 表示用に間引く（大きいほど軽い）。4なら 1/4 解像度で表示。
     """
 
-    if hyper_cube.ndim != 3:
-        raise ValueError(f"hyper_cube must be 3D (H,W,B), got shape={hyper_cube.shape}")
-
     H, W, B = hyper_cube.shape
-    if n_show is None:
-        n_show = B
-    n_show = min(int(n_show), B)
+    n_show = B 
 
-    # 表示を軽くする（保存画像の見やすさも上がる）
-    if downsample and downsample > 1:
-        cube0 = hyper_cube[::downsample, ::downsample, :n_show]
-    else:
-        cube0 = hyper_cube[:, :, :n_show]
+    cube0 = hyper_cube[::downsample, ::downsample, :n_show]
 
     # 欠損候補をマスク（必要ならここを調整）
     cube = cube0.astype(np.float32, copy=False)
@@ -116,8 +94,6 @@ def visualization_HS_cube_a(hyper_cube, n_show=None, outpath="./data/all_bands.p
 
     # 表示レンジを全バンド共通で決定（比較しやすい）
     valid = cube.compressed()
-    if valid.size == 0:
-        raise ValueError("All pixels are masked. Check missing-value rules (0 / 65535).")
     vmin, vmax = np.percentile(valid, percentile)
 
     # グリッド計算
@@ -151,7 +127,6 @@ def visualization_HS_cube_a(hyper_cube, n_show=None, outpath="./data/all_bands.p
 
 if __name__=="__main__":
     # https://sorabatake.jp/40363/
-    # filepath = "/Volumes/ssd/HSID/HISUI/HSHL1G_N203W1558_20230818005931_20240308010611.tif"
     filepath = "/Volumes/ssd/HSID/HISUI/HSHL1G_N329E1299_20230523072720_20240308144532.tif"
     outdir = "./data"
     os.makedirs(outdir, exist_ok=True)
@@ -159,14 +134,11 @@ if __name__=="__main__":
     hyper_cube = tif.imread(filepath)
 
     print(hyper_cube.shape)
-
-    # check_missing_val(hyper_cube)
-    plot_histrogram_HS(hyper_cube)
-    plot_histrogram_HS_rm_missing_val(hyper_cube)
-    # visualization_HS_cube(hyper_cube)
-    visualization_HS_cube_a(hyper_cube, n_show=None, ncols=10, outpath="./data/all_bands.png")
-
     
-
+    # check_missing_val(hyper_cube)
+    # plot_histrogram_HS(hyper_cube)
+    # plot_histrogram_HS_rm_missing_val(hyper_cube)
+    # visualization_HS_cube(hyper_cube,IDX_BAND=142)
+    # visualization_HS_cube_all(hyper_cube, outpath="./data/all_bands.png")
     
  
