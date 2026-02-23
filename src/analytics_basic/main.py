@@ -191,6 +191,8 @@ def prac_unet(hyper_cube, outdir="./data"):
         cleanup=True,
     )
 
+def visualize_hsc_3d():
+    pass
     
 if __name__=="__main__":
     # https://sorabatake.jp/40363/
